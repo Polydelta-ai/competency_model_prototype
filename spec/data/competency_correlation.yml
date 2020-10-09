@@ -1,0 +1,81 @@
+data_mixins:
+  competency_correlation:
+    fields:
+      competency_correlation:
+          type: "@django.ForeignKey"
+          relation: competency_correlation
+          options:
+            "null": true
+            on_delete: "@django.PROTECT"
+            editable: false
+
+  competency_correlation_relation:
+    fields:
+      competency_correlations:
+        type: "@django.ManyToManyField"
+        relation: competency_correlation
+
+
+data_base:
+    competency_correlation:
+        base: resource
+        mixins: [competency_correlation]
+        id_fields: [competency_correlation_id, name]
+        meta:
+            unique_together: [competency_correlation, name]
+            scope: competency_correlation
+
+
+data:
+  competency_correlation:
+    base: environment
+    id_fields: [competency1,competency2]
+    key: id
+    roles:
+      edit: [admin]
+      view: [user]
+    fields:
+      name: null
+      competency1:
+        type: "@django.ForeignKey"
+        relation: competency
+        options:
+          "null": true
+          on_delete: "@django.PROTECT"
+          editable: false      
+      competency2:
+        type: "@django.ForeignKey"
+        relation: competency
+        options:
+          "null": true
+          on_delete: "@django.PROTECT"
+          editable: false
+      correlation:
+        type: "@django.FloatField"
+        options:
+          "null": true
+      
+              
+command_mixins:
+    competency_correlation:
+      mixins: [competency_correlation]
+      meta:
+          competency_correlation:
+            data: competency_correlation
+            priority: 5
+
+command_base:
+    competency_correlation:
+        mixins: [competency_correlation]
+        server_enabled: true
+        groups_allowed: [admin]
+
+
+command:
+    competency_correlation:
+        resource: competency_correlation
+        base_name: competency_correlation
+        base: competency_correlation
+        priority: 90
+
+

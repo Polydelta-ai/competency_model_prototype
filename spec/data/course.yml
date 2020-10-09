@@ -1,0 +1,83 @@
+data_mixins:
+  course:
+    fields:
+      course:
+          type: "@django.ForeignKey"
+          relation: course
+          options:
+            "null": true
+            on_delete: "@django.PROTECT"
+            editable: false
+  
+  course_relation:
+    fields:
+      courses:
+        type: "@django.ManyToManyField"
+        relation: course
+
+
+data_base:
+    course:
+        base: resource
+        mixins: [course]
+        id_fields: [course_id, name]
+        meta:
+            unique_together: [course, name]
+            scope: course
+
+
+data:
+  course:
+    base: environment
+    mixins: [groups, competency_relation]
+    id_fields: [course_code]
+    key: course_code
+    roles:
+      edit: [admin]
+      view: [user]
+    fields:
+      course_code:
+        type: "@django.CharField"
+        options:
+          "null": true
+      description:
+        type: "@django.TextField"
+        options:
+          "null": true
+      overview:
+        type: "@django.TextField"
+        options:
+          "null": true
+      target_audience:
+        type: "@django.TextField"
+        options:
+          "null": true
+      objectives:
+        type: "@django.TextField"
+        options:
+          "null": true
+      
+              
+command_mixins:
+    course:
+      mixins: [course]
+      meta:
+        course:
+          data: course
+          priority: 3
+
+command_base:
+    course:
+        mixins: [course]
+        server_enabled: true
+        groups_allowed: [admin]
+
+
+command:
+    course:
+        resource: course
+        base_name: course
+        base: course
+        priority: 90
+
+

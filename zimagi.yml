@@ -1,2 +1,3 @@
 name: course_competency_recommendation_system
 requirements: requirements.txt
+scripts: scripts/install.sh
