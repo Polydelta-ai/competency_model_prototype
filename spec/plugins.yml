@@ -1,0 +1,18 @@
+plugin:
+    formatter:
+        providers:
+            number_only:
+
+    source:
+        providers:
+            correlation:
+                base: csv_file
+
+            xls:
+                requirement:
+                    file:
+                        type: str
+                        help: "XLS file path from top level module directory that contains data to import"
+                    sheet:
+                        type: str
+                        help: "XLS sheet name that contains data to import"
