@@ -31,7 +31,7 @@ data:
     course:
         class: Course
         base: environment
-        mixins: [group, competency_relation]
+        mixins: [competency_relation]
         id_fields: [course_code]
         key: course_code
         roles:
@@ -43,20 +43,27 @@ data:
                 options:
                     "null": true
                     max_length: 256
+            type:
+                type: "@django.CharField"
+                options:
+                    "null": true
+                    max_length: 256
             description:
                 type: "@django.TextField"
                 options:
                     "null": true
-            overview:
-                type: "@django.TextField"
+            category:
+                type: "@django.CharField"
                 options:
                     "null": true
-            target_audience:
-                type: "@django.TextField"
+                    max_length: 256
+            bureau:
+                type: "@django.CharField"
                 options:
                     "null": true
-            objectives:
-                type: "@django.TextField"
+                    max_length: 256
+            duration:
+                type: "@django.IntegerField"
                 options:
                     "null": true
 
