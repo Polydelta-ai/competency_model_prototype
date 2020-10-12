@@ -1,0 +1,38 @@
+import:
+    hydro-science-courses:
+        source: xls
+        file: import/TechnicalCourses-Hydro-Science-NaturalResources.xlsx
+        sheet: "Sheet1"
+        data:
+            course:
+                map:
+                    name:
+                        column: "Course Name"
+                        validators:
+                            string:
+                                empty: false
+                    course_code:
+                        column: "Course ID"
+                        validators:
+                            number:
+                                min: 0
+                    type:
+                        column: "Type"
+                        validators:
+                            string:
+                                empty: false
+                    description:
+                        column: "Course Summary"
+                        validators:
+                            string:
+                                empty: false
+                    category:
+                        column: "Course Category"
+                        validators:
+                            string:
+                                empty: false
+                    bureau:
+                        column: "Responsible Bureau"
+                    duration:
+                        column: "Duration"
+                        formatter: number_only
