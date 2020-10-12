@@ -1,0 +1,16 @@
+config_store:
+    course_list_fields:
+        - course_code
+        - type
+        - category
+        - bureau
+        - duration
+    course_display_fields:
+        - id
+        - name
+        - course_code
+        - type
+        - category
+        - description
+        - bureau
+        - duration
