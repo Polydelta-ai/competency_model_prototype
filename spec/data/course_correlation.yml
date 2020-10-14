@@ -62,10 +62,3 @@ command_base:
         mixins: [course_correlation]
         server_enabled: true
         groups_allowed: [doi-admin]
-
-command:
-    course_correlation:
-        resource: course_correlation
-        base_name: course_correlation
-        base: course_correlation
-        priority: 90

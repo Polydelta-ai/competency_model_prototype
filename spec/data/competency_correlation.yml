@@ -77,10 +77,3 @@ command_base:
         mixins: [competency_correlation]
         server_enabled: true
         groups_allowed: [doi-admin]
-
-command:
-    competency_correlation:
-        resource: competency_correlation
-        base_name: competency_correlation
-        base: competency_correlation
-        priority: 90
