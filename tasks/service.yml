@@ -1,0 +1,30 @@
+_command: &command
+    provider: remote_command
+    roles: doi-admin
+    servers:
+        - name.startswith=doi-ccp
+
+environment:
+    <<: *command
+    command: env | grep 'ZIMAGI_' > @env_file
+    options:
+        env_file: ~/.env
+
+update:
+    <<: *command
+    command: docker-compose rm -fs @service && docker-compose pull && docker-compose up -d && docker image prune -fa
+    options:
+        service: "command-api data-api scheduler worker"
+
+restart:
+    <<: *command
+    command: docker-compose restart @service
+    options:
+        service: "command-api data-api scheduler worker"
+
+log:
+    <<: *command
+    command: docker-compose logs --tail=@count @service
+    options:
+        count: 100
+        service: "command-api data-api scheduler worker"
