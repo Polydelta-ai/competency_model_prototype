@@ -1,3 +1,11 @@
 name: course_competency_recommendation_system
+
 requirements: requirements.txt
 scripts: scripts/install.sh
+
+modules:
+    - remote: https://github.com/dccs-tech/zimagi-docker.git
+      reference: master
+
+    - remote: https://github.com/dccs-tech/zimagi-cluster-aws.git
+      reference: main
