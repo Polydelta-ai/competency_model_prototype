@@ -35,7 +35,7 @@ data:
         key: id
         roles:
             edit: [doi-admin]
-            view: [doi-user]
+            view: [public]
         fields:
             name: null
             competency1:

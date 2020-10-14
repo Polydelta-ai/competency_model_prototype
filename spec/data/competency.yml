@@ -33,15 +33,16 @@ data:
         base: environment
         mixins: [competency_correlation_relation]
         id_fields: [definition]
-        key: competency
         roles:
             edit: [doi-admin]
-            view: [doi-user]
+            view: [public]
         fields:
             definition:
                 type: "@django.TextField"
                 options:
                     "null": true
+        meta:
+            unique_together: []
 
 command_mixins:
     competency:
@@ -54,7 +55,7 @@ command_mixins:
 command_base:
     competency:
         class: CompetencyBase
-        mixins: [competency]
+        mixins: [competency, competency_correlation]
         server_enabled: true
         groups_allowed: [doi-admin]
 

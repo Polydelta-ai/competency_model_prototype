@@ -31,12 +31,12 @@ data:
     course:
         class: Course
         base: environment
-        mixins: [competency_relation]
+        mixins: [course_correlation_relation]
         id_fields: [course_code]
         key: course_code
         roles:
             edit: [doi-admin]
-            view: [doi-user]
+            view: [public]
         fields:
             course_code:
                 type: "@django.CharField"
@@ -66,6 +66,8 @@ data:
                 type: "@django.IntegerField"
                 options:
                     "null": true
+        meta:
+            unique_together: []
 
 command_mixins:
     course:
@@ -78,7 +80,7 @@ command_mixins:
 command_base:
     course:
         class: CourseBase
-        mixins: [course]
+        mixins: [course, course_correlation, competency]
         server_enabled: true
         groups_allowed: [doi-admin]
 
