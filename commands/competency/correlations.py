@@ -32,9 +32,9 @@ class Correlations(Command('competency.correlations')):
         definition_similarity = find_similarities('definition')
 
         self.info("Calculating final competency similarities")
-        similarity = (self.name_weight * name_similarities) + ((1 - self.name_weight) * definition_similarities)
+        similarity = (self.name_weight * name_similarity) + ((1 - self.name_weight) * definition_similarity)
 
-        for competency_name in name_similarities.columns:
+        for competency_name in name_similarity.columns:
             self.info("Saving competency correlations for: {}".format(competency_name))
             competency = self._competency.retrieve(competency_name)
 
