@@ -1,0 +1,68 @@
+config:
+    # Core
+    provision_domain: true
+
+    cert_name: doi-ccp
+    cert_group: doi-ccp
+
+    # Data
+    data_group: doi-ccp
+    data_subnet_cidr_prefix: 28
+    data_subnet_public_ip: false
+
+    database: "%%admin_data_database:30"
+    database_user: "%%admin_data_database_user:30"
+    database_password: "%%admin_data_database_password:30"
+    database_port: 5432
+
+    queue_type: redis
+    queue_port: 6379
+
+    # Service
+    service_name: doi-ccp
+    service_group: doi-ccp
+    service_cli_host_name: default
+    service_subnet_cidr_prefix: 26
+    service_subnet_public_ip: true
+
+    service_manifest: https://raw.githubusercontent.com/Polydelta-ai/competency_model_prototype/main/docker-compose.yml
+    service_command_port: 5123
+    service_data_port: 5323
+    service_lib_dir: /usr/local/lib/zimagi
+    service_count: 1
+    service_secret_key: "%%zimagi_secret_key:50"
+    service_allowed_hosts:
+        - "*"
+
+    service_user: "@CLI_ADMIN_USER"
+    service_default_token: "@CLI_DEFAULT_ADMIN_TOKEN"
+    service_parallel: "@CLI_PARALLEL"
+    service_db_max_connections: 10
+    service_thread_count: 10
+    service_worker_concurrency: 5
+    service_terraform_max_processes: 10
+    service_ansible_max_processes: 10
+    service_auto_migrate_timeout: 300
+    service_auto_migrate_interval: 9000
+    service_mutex_ttl_seconds: 300
+    service_log_level: "@CLI_LOG_LEVEL"
+    service_debug: "@CLI_DEBUG"
+    service_core_module: "@CLI_CORE_MODULE"
+    service_db_package_all_name: "@CLI_DB_PACKAGE_ALL_NAME"
+
+    service_email_host:
+    service_email_port: 25
+    service_email_host_user: ""
+    service_email_host_password: ""
+    service_email_use_tls: true
+    service_email_use_ssl: false
+    service_email_ssl_certfile:
+    service_email_ssl_keyfile:
+    service_email_timeout:
+    service_email_subject_prefix: "[ZIMAGI]:"
+    service_email_use_localtime: true
+
+group:
+    "@cert_group":
+    "@data_group":
+    "@service_group":

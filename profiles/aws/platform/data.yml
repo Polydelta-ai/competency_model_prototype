@@ -1,0 +1,47 @@
+parents:
+    - aws/config
+
+database:
+    postgresql:
+        provider: aurora_serverless
+        network: "@aws_networks[0]"
+        subnets: "@aws_data_subnets"
+        port: "@database_port"
+        database_name: "@database"
+        user_name: "@database_user"
+        user_password: "@database_password"
+        family: "@aws_database_family"
+        engine: "@aws_database_engine"
+        engine_version: "@aws_database_engine_version"
+        cluster_parameters: "@aws_database_parameters"
+        create_timeout: "@aws_database_create_timeout"
+        update_timeout: "@aws_database_update_timeout"
+        delete_timeout: "@aws_database_delete_timeout"
+        retention_period: "@aws_database_retention_period"
+        backup_window: "@aws_database_backup_window"
+        maintenance_window: "@aws_database_maintenance_window"
+        auto_pause: "@aws_database_auto_pause"
+        auto_pause_period: "@aws_database_auto_pause_period"
+        max_capacity: "@aws_database_max_capacity"
+        min_capacity: "@aws_database_min_capacity"
+        groups: "@data_group"
+        firewalls:
+            - internet
+            - database-internal
+
+    redis:
+        provider: aws_redis
+        network: "@aws_networks[0]"
+        subnets: "@aws_data_subnets"
+        port: "@queue_port"
+        engine_version: "@aws_queue_engine_version"
+        parameter_group_name: "@aws_queue_parameter_group_name"
+        instance_type: "@aws_queue_instance_type"
+        instance_count: "@aws_queue_instance_count"
+        retention_period: "@aws_queue_retention_period"
+        backup_window: "@aws_queue_backup_window"
+        maintenance_window: "@aws_queue_maintenance_window"
+        groups: "@data_group"
+        firewalls:
+            - internet
+            - queue-internal

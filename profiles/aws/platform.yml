@@ -1,0 +1,42 @@
+parents:
+    - aws/config
+
+profile:
+    base-network:
+        module: aws
+        profile: network
+        operations: run
+
+    base-nat:
+        requires: base-network
+        when_type: OR
+        when_not:
+            - "@service_subnet_public_ip"
+            - "@data_subnet_public_ip"
+        module: aws
+        profile: nat
+        operations: run
+
+    platform-core:
+        requires:
+            - base-network
+            - base-nat
+        profile: aws/platform/core
+
+    platform-data:
+        requires: platform-core
+        profile: aws/platform/data
+
+    platform-service:
+        requires: platform-data
+        profile: aws/platform/service
+        deploy_zimagi: true
+
+post_run:
+    platform-server-rotate:
+        command: user rotate
+
+post_destroy:
+    platform-host:
+        command: host remove
+        host_name: "@service_cli_host_name"

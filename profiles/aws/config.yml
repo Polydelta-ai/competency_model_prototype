@@ -1,0 +1,62 @@
+parents:
+    - module: aws
+      profile: config
+
+    - config
+
+config:
+    # Core
+    domain_provider: route53
+
+    aws_networks:
+        - aws-us-east-1
+
+    aws_nat_subnets:
+        - nat-a
+        - nat-b
+
+    # Data
+    aws_data_subnets:
+        - data-a
+        - data-b
+
+    aws_database_family: aurora-postgresql10
+    aws_database_engine: aurora-postgresql
+    aws_database_engine_version: 10.7
+    aws_database_create_timeout: "120m"
+    aws_database_update_timeout: "120m"
+    aws_database_delete_timeout: "120m"
+    aws_database_parameters: []
+    aws_database_retention_period: 5
+    aws_database_backup_window: "07:00-09:00"
+    aws_database_maintenance_window: "wed:04:00-wed:04:30"
+    aws_database_auto_pause: true
+    aws_database_auto_pause_period: 300
+    aws_database_max_capacity: 8
+    aws_database_min_capacity: 2
+
+    aws_queue_engine_version: 5.0.6
+    aws_queue_parameter_group_name: default.redis5.0
+    aws_queue_instance_type: cache.t3.small
+    aws_queue_instance_count: 2
+    aws_queue_retention_period: 5
+    aws_queue_backup_window: "07:00-09:00"
+    aws_queue_maintenance_window: "wed:04:00-wed:05:00"
+
+    # Service
+    aws_service_subnets:
+        - service-a
+        - service-b
+
+    aws_service_machine: t2.medium
+    aws_service_tenancy: default
+    aws_service_monitoring: false
+    aws_service_ebs_optimized: false
+
+    aws_service_lb_timeout: 3600
+    aws_service_lb_health_path: /status
+    aws_service_lb_healthy_status: 200
+    aws_service_lb_health_check_interval: 30
+    aws_service_lb_health_timeout: 10
+    aws_service_lb_healthy_threshold: 3
+    aws_service_lb_unhealthy_threshold: 3

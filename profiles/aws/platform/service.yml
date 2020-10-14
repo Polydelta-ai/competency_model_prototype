@@ -1,0 +1,174 @@
+parents:
+    - aws/config
+
+config:
+    ssh_firewall: "?> @service_subnet_public_ip ? 'ssh-external' | 'ssh-internal'"
+
+server:
+    "@service_name":
+        count: "@service_count"
+        provider: ec2
+        network: "@aws_networks[0]"
+        subnet: "@aws_service_subnets"
+        image: "@aws_ubuntu_image[<network>]"
+        ssh_port: "@ssh_port"
+        user: "@aws_ubuntu_user"
+        machine: "@aws_service_machine"
+        tenancy: "@aws_service_tenancy"
+        monitoring: "@aws_service_monitoring"
+        ebs_optimized: "@aws_service_ebs_optimized"
+        groups: "@service_group"
+        volumes:
+            "@service_lib_dir":
+                type: nfs4
+                location: "&{storage_mount(network=<network>;subnet=<subnet>):@{service_name}:remote_host}:/"
+                options: "@aws_efs_volume_options"
+                mode: "0770"
+        firewalls:
+            - internet
+            - "@ssh_firewall"
+            - command-internal
+            - data-internal
+
+load_balancer:
+    "@service_name":
+        provider: aws_application
+        network: "@aws_networks[0]"
+        subnets: "@aws_service_subnets"
+        domain: "?> @provision_domain ? '@root_domain' | None"
+        internal: false
+        idle_timeout: "@aws_service_lb_timeout"
+        groups: "@service_group"
+        firewalls:
+            - internet
+            - command-external
+            - data-external
+        listeners:
+            command:
+                port: "@service_command_port"
+                certificate: "@cert_name"
+                target_port: "@service_command_port"
+                target_protocol: https
+                health_check_path: "@aws_service_lb_health_path"
+                health_check_interval: "@aws_service_lb_health_check_interval"
+                health_check_timeout: "@aws_service_lb_health_timeout"
+                healthy_status: "@aws_service_lb_healthy_status"
+                healthy_threshold: "@aws_service_lb_healthy_threshold"
+                unhealthy_threshold: "@aws_service_lb_unhealthy_threshold"
+                server_groups: "@service_group"
+            data:
+                port: "@service_data_port"
+                certificate: "@cert_name"
+                target_port: "@service_data_port"
+                target_protocol: https
+                health_check_path: "@aws_service_lb_health_path"
+                health_check_interval: "@aws_service_lb_health_check_interval"
+                health_check_timeout: "@aws_service_lb_health_timeout"
+                healthy_status: "@aws_service_lb_healthy_status"
+                healthy_threshold: "@aws_service_lb_healthy_threshold"
+                unhealthy_threshold: "@aws_service_lb_unhealthy_threshold"
+                server_groups: "@service_group"
+
+post_run:
+    credentials:
+        command: server rotate
+        scopes:
+            network: "@aws_networks[0]"
+        server_search:
+            - subnet.network.name=<network>
+            - groups.name=@service_group
+
+    user-environment:
+        requires: credentials
+        module: cluster
+        task: user-environment
+        scopes:
+            network: "@aws_networks[0]"
+        servers:
+            - subnet.network.name=<network>
+            - groups.name=@service_group
+
+    app-environment:
+        requires: credentials
+        task: environment
+        scopes:
+            network: "@aws_networks[0]"
+        servers:
+            - subnet.network.name=<network>
+            - groups.name=@service_group
+        env:
+            ZIMAGI_COMMAND_PORT: "@service_command_port"
+            ZIMAGI_DATA_PORT: "@service_data_port"
+            ZIMAGI_POSTGRES_HOST: "&database(network=<network>):postgresql:host"
+            ZIMAGI_POSTGRES_PORT: "@database_port"
+            ZIMAGI_POSTGRES_DB: "@database"
+            ZIMAGI_POSTGRES_USER: "@database_user"
+            ZIMAGI_POSTGRES_PASSWORD: "@database_password"
+            ZIMAGI_REDIS_TYPE: "@queue_type"
+            ZIMAGI_REDIS_HOST: "&database(network=<network>):redis:host"
+            ZIMAGI_REDIS_PORT: "@queue_port"
+            ZIMAGI_LIB_DIRECTORY: "@service_lib_dir"
+            ZIMAGI_ALLOWED_HOSTS: "@>>service_allowed_hosts"
+            ZIMAGI_DEFAULT_ENV_NAME: "@environment"
+            ZIMAGI_DEFAULT_HOST_NAME: "@CLI_DEFAULT_HOST_NAME"
+            ZIMAGI_DEFAULT_RUNTIME_REPO: "@CLI_DEFAULT_RUNTIME_REPO"
+            ZIMAGI_DEFAULT_RUNTIME_IMAGE: "@CLI_DEFAULT_RUNTIME_IMAGE"
+            ZIMAGI_SECRET_KEY: "@service_secret_key"
+            ZIMAGI_PARALLEL: "@service_parallel"
+            ZIMAGI_THREAD_COUNT: "@service_thread_count"
+            ZIMAGI_AUTO_MIGRATE_TIMEOUT: "@service_auto_migrate_timeout"
+            ZIMAGI_AUTO_MIGRATE_INTERVAL: "@service_auto_migrate_interval"
+            ZIMAGI_TIME_ZONE: "@primary_timezone"
+            ZIMAGI_CORE_MODULE: "@service_core_module"
+            ZIMAGI_DEFAULT_MODULES: "@deploy_modules"
+            ZIMAGI_DB_PACKAGE_ALL_NAME: "@service_db_package_all_name"
+            ZIMAGI_DB_MAX_CONNECTIONS: "@service_db_max_connections"
+            ZIMAGI_LOG_LEVEL: "@service_log_level"
+            ZIMAGI_DEBUG: "@service_debug"
+            ZIMAGI_ADMIN_USER: "@service_user"
+            ZIMAGI_DEFAULT_ADMIN_TOKEN: "@service_default_token"
+            ZIMAGI_MUTEX_TTL_SECONDS: "@service_mutex_ttl_seconds"
+            ZIMAGI_EMAIL_HOST: "@service_email_host"
+            ZIMAGI_EMAIL_PORT: "@service_email_port"
+            ZIMAGI_EMAIL_HOST_USER: "@service_email_host_user"
+            ZIMAGI_EMAIL_HOST_PASSWORD: "@service_email_host_password"
+            ZIMAGI_EMAIL_USE_TLS: "@service_email_use_tls"
+            ZIMAGI_EMAIL_USE_SSL: "@service_email_use_ssl"
+            ZIMAGI_EMAIL_SSL_CERTFILE: "@service_email_ssl_certfile"
+            ZIMAGI_EMAIL_SSL_KEYFILE: "@service_email_ssl_keyfile"
+            ZIMAGI_EMAIL_TIMEOUT: "@service_email_timeout"
+            ZIMAGI_EMAIL_SUBJECT_PREFIX: "@service_email_subject_prefix"
+            ZIMAGI_EMAIL_USE_LOCALTIME: "@service_email_use_localtime"
+            ZIMAGI_WORKER_CONCURRENCY: "@service_worker_concurrency"
+            ZIMAGI_TERRAFORM_MAX_PROCESSES: "@service_terraform_max_processes"
+            ZIMAGI_ANSIBLE_MAX_PROCESSES: "@service_ansible_max_processes"
+
+    services:
+        requires: app-environment
+        module: docker
+        task: services
+        scopes:
+            network: "@aws_networks[0]"
+        servers:
+            - subnet.network.name=<network>
+            - groups.name=@service_group
+        ntp_timezone: "@primary_timezone"
+        app_user: "@aws_ubuntu_user"
+        remote_docker_compose: "@service_manifest"
+        docker_users:
+            - "@aws_ubuntu_user"
+
+    wait:
+        requires: services
+        module: cluster
+        task: wait-https
+        wait_hosts: "&load_balancer(network=@aws_networks[0]):@service_name:variables[lb_dns_name]"
+        wait_port: "@service_command_port"
+        timeout: 600
+
+    deploy:
+        when: "@deploy_zimagi"
+        requires: wait
+        command: deploy
+        destination: "@{service_name}.@root_domain"
+        destination_name: "@service_cli_host_name"

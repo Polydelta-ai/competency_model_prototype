@@ -1,0 +1,138 @@
+parents:
+    - module: aws
+      profile: domain
+
+    - aws/config
+
+domain:
+    "@root_domain":
+        when: "@provision_domain"
+        provider: "@domain_provider"
+        keep: true
+        certificate_authority: letsencrypt
+
+certificate:
+    "@cert_name":
+        when: "@provision_domain"
+        provider: aws
+        network: "@aws_networks"
+        domain: "@root_domain"
+        groups: "@cert_group"
+
+subnet:
+    data-a:
+        network: "@aws_networks[0]"
+        cidr_prefix: "@data_subnet_cidr_prefix"
+        zone_suffix: a
+        use_public_ip: "@data_subnet_public_ip"
+        nat_subnet: "?> not @data_subnet_public_ip ? 'nat-a' | None"
+        groups: "@data_group"
+
+    data-b:
+        network: "@aws_networks[0]"
+        cidr_prefix: "@data_subnet_cidr_prefix"
+        zone_suffix: b
+        use_public_ip: "@data_subnet_public_ip"
+        nat_subnet: "?> not @data_subnet_public_ip ? 'nat-b' | None"
+        groups: "@data_group"
+
+    service-a:
+        network: "@aws_networks[0]"
+        cidr_prefix: "@service_subnet_cidr_prefix"
+        zone_suffix: a
+        use_public_ip: "@service_subnet_public_ip"
+        nat_subnet: "?> not @service_subnet_public_ip ? 'nat-a' | None"
+        groups: "@service_group"
+
+    service-b:
+        network: "@aws_networks[0]"
+        cidr_prefix: "@service_subnet_cidr_prefix"
+        zone_suffix: b
+        use_public_ip: "@service_subnet_public_ip"
+        nat_subnet: "?> not @service_subnet_public_ip ? 'nat-b' | None"
+        groups: "@service_group"
+
+firewall:
+    database-internal:
+        network: "@aws_networks[0]"
+        groups: "@data_group"
+        rules:
+            tcp_in:
+                mode: ingress
+                protocol: tcp
+                from_port: "@database_port"
+                to_port: "@database_port"
+                cidrs: "&subnet(network=@aws_networks[0]):@aws_service_subnets:cidr"
+
+    queue-internal:
+        network: "@aws_networks[0]"
+        groups: "@data_group"
+        rules:
+            tcp_in:
+                mode: ingress
+                protocol: tcp
+                from_port: "@queue_port"
+                to_port: "@queue_port"
+                cidrs: "&subnet(network=@aws_networks[0]):@aws_service_subnets:cidr"
+
+    command-external:
+        network: "@aws_networks[0]"
+        groups: "@service_group"
+        rules:
+            tcp_in:
+                mode: ingress
+                protocol: tcp
+                from_port: "@service_command_port"
+                to_port: "@service_command_port"
+
+    command-internal:
+        requires: command-external
+        network: "@aws_networks[0]"
+        groups: "@service_group"
+        rules:
+            tcp_in:
+                mode: ingress
+                protocol: tcp
+                from_port: "@service_command_port"
+                to_port: "@service_command_port"
+                source_firewall: command-external
+
+    data-external:
+        network: "@aws_networks[0]"
+        groups: "@service_group"
+        rules:
+            tcp_in:
+                mode: ingress
+                protocol: tcp
+                from_port: "@service_data_port"
+                to_port: "@service_data_port"
+
+    data-internal:
+        requires: data-external
+        network: "@aws_networks[0]"
+        groups: "@service_group"
+        rules:
+            tcp_in:
+                mode: ingress
+                protocol: tcp
+                from_port: "@service_data_port"
+                to_port: "@service_data_port"
+                source_firewall: data-external
+
+storage:
+    "@service_name":
+        provider: efs
+        network: "@aws_networks[0]"
+        performance_mode: "@aws_storage_performance_mode"
+        throughput_mode: "@aws_storage_throughput_mode"
+        provisioned_throughput: "@aws_storage_provisioned_throughput"
+        encrypted: "@aws_storage_encrypted"
+        groups: "@service_group"
+
+mount:
+    "@service_name":
+        storage: "@service_name"
+        network: "@aws_networks[0]"
+        subnet: "@aws_service_subnets"
+        groups: "@service_group"
+        firewalls: "@storage_firewalls"
