@@ -10,9 +10,9 @@ config:
     data_subnet_cidr_prefix: 28
     data_subnet_public_ip: false
 
-    database: "%%admin_data_database:30"
-    database_user: "%%admin_data_database_user:30"
-    database_password: "%%admin_data_database_password:30"
+    database: "%%database:30"
+    database_user: "%%database_user:30"
+    database_password: "%%database_password:30"
     database_port: 5432
 
     queue_type: redis
@@ -30,7 +30,7 @@ config:
     service_data_port: 5323
     service_lib_dir: /usr/local/lib/zimagi
     service_count: 1
-    service_secret_key: "%%zimagi_secret_key:50"
+    service_secret_key: "%%secret_key:50"
     service_allowed_hosts:
         - "*"
 
@@ -59,7 +59,7 @@ config:
     service_email_ssl_certfile:
     service_email_ssl_keyfile:
     service_email_timeout:
-    service_email_subject_prefix: "[ZIMAGI]:"
+    service_email_subject_prefix: "[DOI CCP]:"
     service_email_use_localtime: true
 
 group:

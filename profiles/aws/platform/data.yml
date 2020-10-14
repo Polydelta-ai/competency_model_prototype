@@ -2,7 +2,7 @@ parents:
     - aws/config
 
 database:
-    postgresql:
+    doi-ccp-postgresql:
         provider: aurora_serverless
         network: "@aws_networks[0]"
         subnets: "@aws_data_subnets"
@@ -27,9 +27,9 @@ database:
         groups: "@data_group"
         firewalls:
             - internet
-            - database-internal
+            - doi-ccp-database-internal
 
-    redis:
+    doi-ccp-redis:
         provider: aws_redis
         network: "@aws_networks[0]"
         subnets: "@aws_data_subnets"
@@ -44,4 +44,4 @@ database:
         groups: "@data_group"
         firewalls:
             - internet
-            - queue-internal
+            - doi-ccp-queue-internal

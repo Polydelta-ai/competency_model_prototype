@@ -27,8 +27,8 @@ server:
         firewalls:
             - internet
             - "@ssh_firewall"
-            - command-internal
-            - data-internal
+            - doi-ccp-command-internal
+            - doi-ccp-data-internal
 
 load_balancer:
     "@service_name":
@@ -41,8 +41,8 @@ load_balancer:
         groups: "@service_group"
         firewalls:
             - internet
-            - command-external
-            - data-external
+            - doi-ccp-command-external
+            - doi-ccp-data-external
         listeners:
             command:
                 port: "@service_command_port"
@@ -99,13 +99,13 @@ post_run:
         env:
             ZIMAGI_COMMAND_PORT: "@service_command_port"
             ZIMAGI_DATA_PORT: "@service_data_port"
-            ZIMAGI_POSTGRES_HOST: "&database(network=<network>):postgresql:host"
+            ZIMAGI_POSTGRES_HOST: "&database(network=<network>):doi-ccp-postgresql:host"
             ZIMAGI_POSTGRES_PORT: "@database_port"
             ZIMAGI_POSTGRES_DB: "@database"
             ZIMAGI_POSTGRES_USER: "@database_user"
             ZIMAGI_POSTGRES_PASSWORD: "@database_password"
             ZIMAGI_REDIS_TYPE: "@queue_type"
-            ZIMAGI_REDIS_HOST: "&database(network=<network>):redis:host"
+            ZIMAGI_REDIS_HOST: "&database(network=<network>):doi-ccp-redis:host"
             ZIMAGI_REDIS_PORT: "@queue_port"
             ZIMAGI_LIB_DIRECTORY: "@service_lib_dir"
             ZIMAGI_ALLOWED_HOSTS: "@>>service_allowed_hosts"

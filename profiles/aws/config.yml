@@ -17,8 +17,8 @@ config:
 
     # Data
     aws_data_subnets:
-        - data-a
-        - data-b
+        - doi-ccp-data-a
+        - doi-ccp-data-b
 
     aws_database_family: aurora-postgresql10
     aws_database_engine: aurora-postgresql
@@ -45,8 +45,8 @@ config:
 
     # Service
     aws_service_subnets:
-        - service-a
-        - service-b
+        - doi-ccp-service-a
+        - doi-ccp-service-b
 
     aws_service_machine: t2.medium
     aws_service_tenancy: default

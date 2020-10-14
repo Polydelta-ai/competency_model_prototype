@@ -20,7 +20,7 @@ certificate:
         groups: "@cert_group"
 
 subnet:
-    data-a:
+    doi-ccp-data-a:
         network: "@aws_networks[0]"
         cidr_prefix: "@data_subnet_cidr_prefix"
         zone_suffix: a
@@ -28,7 +28,7 @@ subnet:
         nat_subnet: "?> not @data_subnet_public_ip ? 'nat-a' | None"
         groups: "@data_group"
 
-    data-b:
+    doi-ccp-data-b:
         network: "@aws_networks[0]"
         cidr_prefix: "@data_subnet_cidr_prefix"
         zone_suffix: b
@@ -36,7 +36,7 @@ subnet:
         nat_subnet: "?> not @data_subnet_public_ip ? 'nat-b' | None"
         groups: "@data_group"
 
-    service-a:
+    doi-ccp-service-a:
         network: "@aws_networks[0]"
         cidr_prefix: "@service_subnet_cidr_prefix"
         zone_suffix: a
@@ -44,7 +44,7 @@ subnet:
         nat_subnet: "?> not @service_subnet_public_ip ? 'nat-a' | None"
         groups: "@service_group"
 
-    service-b:
+    doi-ccp-service-b:
         network: "@aws_networks[0]"
         cidr_prefix: "@service_subnet_cidr_prefix"
         zone_suffix: b
@@ -53,7 +53,7 @@ subnet:
         groups: "@service_group"
 
 firewall:
-    database-internal:
+    doi-ccp-database-internal:
         network: "@aws_networks[0]"
         groups: "@data_group"
         rules:
@@ -64,7 +64,7 @@ firewall:
                 to_port: "@database_port"
                 cidrs: "&subnet(network=@aws_networks[0]):@aws_service_subnets:cidr"
 
-    queue-internal:
+    doi-ccp-queue-internal:
         network: "@aws_networks[0]"
         groups: "@data_group"
         rules:
@@ -75,7 +75,7 @@ firewall:
                 to_port: "@queue_port"
                 cidrs: "&subnet(network=@aws_networks[0]):@aws_service_subnets:cidr"
 
-    command-external:
+    doi-ccp-command-external:
         network: "@aws_networks[0]"
         groups: "@service_group"
         rules:
@@ -85,8 +85,8 @@ firewall:
                 from_port: "@service_command_port"
                 to_port: "@service_command_port"
 
-    command-internal:
-        requires: command-external
+    doi-ccp-command-internal:
+        requires: doi-ccp-command-external
         network: "@aws_networks[0]"
         groups: "@service_group"
         rules:
@@ -95,9 +95,9 @@ firewall:
                 protocol: tcp
                 from_port: "@service_command_port"
                 to_port: "@service_command_port"
-                source_firewall: command-external
+                source_firewall: doi-ccp-command-external
 
-    data-external:
+    doi-ccp-data-external:
         network: "@aws_networks[0]"
         groups: "@service_group"
         rules:
@@ -108,7 +108,7 @@ firewall:
                 to_port: "@service_data_port"
 
     data-internal:
-        requires: data-external
+        requires: doi-ccp-data-external
         network: "@aws_networks[0]"
         groups: "@service_group"
         rules:
@@ -117,7 +117,7 @@ firewall:
                 protocol: tcp
                 from_port: "@service_data_port"
                 to_port: "@service_data_port"
-                source_firewall: data-external
+                source_firewall: doi-ccp-data-external
 
 storage:
     "@service_name":
