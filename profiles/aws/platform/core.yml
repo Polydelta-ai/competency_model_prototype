@@ -107,7 +107,7 @@ firewall:
                 from_port: "@service_data_port"
                 to_port: "@service_data_port"
 
-    data-internal:
+    doi-ccp-data-internal:
         requires: doi-ccp-data-external
         network: "@aws_networks[0]"
         groups: "@service_group"
