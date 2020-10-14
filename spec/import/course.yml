@@ -1,6 +1,7 @@
 import:
     hydro-science-courses:
-        source: xls
+        source: xls_file
+        tags: [course]
         file: import/TechnicalCourses-Hydro-Science-NaturalResources.xlsx
         sheet: "Sheet1"
         data:
@@ -36,3 +37,31 @@ import:
                     duration:
                         column: "Duration"
                         formatter: number_only
+
+    nctc-parse-data:
+        source: csv_file
+        tags: [course]
+        file: import/NCTC_ParseData.csv
+        data:
+            course:
+                map:
+                    name:
+                        column: "Course Title"
+                        validators:
+                            string:
+                                empty: false
+                    course_code:
+                        column: "Course Code"
+                        validators:
+                            string:
+                                empty: false
+                    description:
+                        column: "Description"
+                        validators:
+                            string:
+                                empty: false
+                    category:
+                        column: "Curriculum Category"
+                        validators:
+                            string:
+                                empty: false

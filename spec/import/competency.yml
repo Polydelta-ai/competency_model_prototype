@@ -1,0 +1,19 @@
+import:
+    competencies:
+        source: csv_file
+        tags: [competency]
+        file: import/mosaic-studies-and-competencies.csv
+        data:
+            competency:
+                map:
+                    name:
+                        column: "Competency Title"
+                        validators:
+                            string:
+                                empty: false
+                        formatter: competency_title
+                    definition:
+                        column: "Competency Definition"
+                        validators:
+                            string:
+                                empty: false
