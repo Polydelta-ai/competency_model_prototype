@@ -2,13 +2,11 @@ plugin:
     formatter:
         providers:
             number_only:
+            competency_title:
 
     source:
         providers:
-            correlation:
-                base: csv_file
-
-            xls:
+            xls_file:
                 requirement:
                     file:
                         type: str

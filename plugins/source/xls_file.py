@@ -5,7 +5,7 @@ from systems.plugins.index import BaseProvider
 import pandas as pd
 
 
-class Provider(BaseProvider('source', 'xls')):
+class Provider(BaseProvider('source', 'xls_file')):
 
     def load(self):
         return pd.read_excel(
