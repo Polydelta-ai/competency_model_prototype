@@ -1,0 +1,28 @@
+command:
+    course:
+        classify:
+            base: course
+            priority: 12
+            parameters:
+                name_weight:
+                    parser: variable
+                    type: float
+                    help: "Competency name weight"
+                    value_label: "WEIGHT"
+                    default: 0.5
+                top_competencies:
+                    parser: variable
+                    type: int
+                    help: "Number of top compencies generated"
+                    value_label: "Extension"
+                    default: 325
+                tensorflow_model:
+                    parser: variable
+                    type: str
+                    help: "Tensorflow model"
+                    value_label: "MODEL URL"
+                    default: https://tfhub.dev/google/universal-sentence-encoder/4
+            parse:
+                name_weight: "--name-weight"
+                top_competencies: "--top-competencies"
+                tensorflow_model: "--tensorflow-model"
