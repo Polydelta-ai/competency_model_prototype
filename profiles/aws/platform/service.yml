@@ -142,6 +142,7 @@ post_run:
             ZIMAGI_WORKER_CONCURRENCY: "@service_worker_concurrency"
             ZIMAGI_TERRAFORM_MAX_PROCESSES: "@service_terraform_max_processes"
             ZIMAGI_ANSIBLE_MAX_PROCESSES: "@service_ansible_max_processes"
+            TFHUB_CACHE_DIR: "/usr/local/lib/zimagi/tensorflow"
 
     services:
         requires: app-environment
